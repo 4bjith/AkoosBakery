@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Star, MapPin, Phone, Mail, Award, Clock, ShoppingCart, Heart } from 'lucide-react'
+import { Star, MapPin, Phone, Mail, Award, Clock, ShoppingCart, Heart, Croissant } from 'lucide-react'
 import './App.css'
 
 // Existing Images
@@ -125,7 +125,7 @@ function App() {
       {/* HEADER */}
       <header className="site-header">
         <div className="logo-area">
-          <div className="logo-circle">A</div>
+          <div className="logo-circle"><Croissant size={22} /></div>
           <div className="logo-text">
             <strong>Akoos Bakery</strong>
             <span>Artisan Bakery</span>
@@ -392,7 +392,7 @@ function App() {
           <div className="footer-grid">
             <div className="footer-brand">
               <div className="logo-area" style={{ marginBottom: '20px' }}>
-                <div className="logo-circle" style={{ background: 'var(--primary)' }}>A</div>
+                <div className="logo-circle" style={{ background: 'var(--primary)' }}><Croissant size={22} /></div>
                 <div className="logo-text" style={{ color: 'white' }}>
                   <strong style={{ color: 'white' }}>Akoos Bakery</strong>
                   <span style={{ color: '#a39b96' }}>Artisan Bakery</span>
