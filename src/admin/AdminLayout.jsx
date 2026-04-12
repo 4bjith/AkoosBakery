@@ -18,7 +18,7 @@ export default function AdminLayout() {
   ];
 
   return (
-    <div className="h-screen bg-[#fdfbf9] flex flex-col md:flex-row font-sans overflow-hidden">
+    <div className="fixed inset-0 bg-[#fdfbf9] flex flex-col md:flex-row font-sans overflow-hidden">
       {/* Mobile Header */}
       <div className="md:hidden flex items-center justify-between p-4 bg-white border-b border-[#f0e9e1] sticky top-0 z-30">
         <div className="flex items-center gap-2">
