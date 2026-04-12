@@ -1,9 +1,17 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 
+let rawBaseURL = import.meta.env.VITE_API_URL || 
   (import.meta.env.PROD 
-    ? 'https://akoos-bakery-backend.onrender.com/api' 
-    : 'http://localhost:3030/api');
+    ? 'https://akoos-bakery-backend.onrender.com' 
+    : 'http://localhost:3030');
+
+// COMPLETELY SOLVE THE ISSUE: Ensure the URL always ends with /api
+// This handles cases where people forget the /api in environment variables
+if (rawBaseURL.endsWith('/')) {
+  rawBaseURL = rawBaseURL.slice(0, -1);
+}
+
+const API_BASE_URL = rawBaseURL.endsWith('/api') ? rawBaseURL : `${rawBaseURL}/api`;
 
 const api = axios.create({
   baseURL: API_BASE_URL,
