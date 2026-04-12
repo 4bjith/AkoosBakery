@@ -15,4 +15,10 @@ export const userAPI = {
   // ─── Addresses ────────────────────────────────────────
   addAddress: (data) => api.post('/users/me/addresses', data),
   deleteAddress: (id) => api.delete(`/users/me/addresses/${id}`),
+
+  // ─── Admin Management ─────────────────────────────────
+  getAllUsers: (params) => api.get('/users', { params }),
+  getUser: (id) => api.get(`/users/${id}`),
+  updateUser: (id, data) => api.patch(`/users/${id}`, data),
+  deleteUser: (id) => api.delete(`/users/${id}`),
 };

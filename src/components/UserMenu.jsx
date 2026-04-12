@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { User, LogOut, Settings } from 'lucide-react';
+import { User, LogOut, Settings, Package } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -71,9 +71,26 @@ export default function UserMenu() {
           <p className="text-xs text-[#6b615a] truncate">{user?.email}</p>
         </div>
         <DropdownMenuSeparator />
+        
+        <Link to="/dashboard">
+          <DropdownMenuItem className="cursor-pointer font-medium text-[#c79261]">
+            <Package className="w-4 h-4 mr-2" />
+            B2B Portal
+          </DropdownMenuItem>
+        </Link>
+        
+        {user?.role === 'admin' && (
+          <Link to="/admin">
+            <DropdownMenuItem className="cursor-pointer font-bold text-red-600 focus:text-red-600 focus:bg-red-50">
+              <Settings className="w-4 h-4 mr-2" />
+              S-Admin Panel
+            </DropdownMenuItem>
+          </Link>
+        )}
+        
         <Link to="/profile">
           <DropdownMenuItem className="cursor-pointer">
-            <Settings className="w-4 h-4 mr-2" />
+            <User className="w-4 h-4 mr-2" />
             My Account
           </DropdownMenuItem>
         </Link>
