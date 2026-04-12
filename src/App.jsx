@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Star, MapPin, Phone, Mail, Award, Clock, ShoppingCart, Heart, Croissant } from 'lucide-react'
 import './App.css'
+import UserMenu from './components/UserMenu'
 
 // Existing Images
 import heroCake from './assets/hero_cake.png'
@@ -145,6 +146,9 @@ function App() {
             <div className="contact-item"><ShoppingCart size={14} /> Cart (0)</div>
           </div>
           <a href="#order" className="btn-primary">Order Now</a>
+          <div style={{ marginLeft: '12px' }}>
+            <UserMenu />
+          </div>
         </div>
       </header>
 
