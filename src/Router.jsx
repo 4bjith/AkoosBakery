@@ -19,7 +19,11 @@ import Support from './dashboard/Support';
 // Super Admin
 import AdminLayout from './admin/AdminLayout';
 import AdminOverview from './admin/AdminOverview';
+import AdminOrders from './admin/AdminOrders';
+import AdminCategories from './admin/AdminCategories';
 import AdminProducts from './admin/AdminProducts';
+import AdminUsers from './admin/AdminUsers';
+import AdminSales from './admin/AdminSales';
 
 export default function Router() {
   return (
@@ -45,23 +49,26 @@ export default function Router() {
         <Route
           path="/admin"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['admin']}>
               <AdminLayout />
             </ProtectedRoute>
           }
         >
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<AdminOverview />} />
+          <Route path="orders" element={<AdminOrders />} />
+          <Route path="categories" element={<AdminCategories />} />
           <Route path="products" element={<AdminProducts />} />
           {/* placeholder for users management */}
-          <Route path="users" element={<AdminOverview />} />
+          <Route path="users" element={<AdminUsers />} />
+          <Route path="sales" element={<AdminSales />} />
         </Route>
 
         {/* Protected B2B Dashboard Portal */}
         <Route
           path="/dashboard"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['customer']}>
               <DashboardLayout />
             </ProtectedRoute>
           }

@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Plus, Search, Edit2, Trash2, X, RefreshCw, Layers } from 'lucide-react';
+import { Plus, Search, Edit2, Trash2, X, RefreshCw, Layers, Package } from 'lucide-react';
 import { toast } from 'sonner';
 import { productAPI } from '@/api/productApi';
+import { categoryAPI } from '@/api/categoryApi';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
@@ -9,6 +10,7 @@ export default function AdminProducts() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [categories, setCategories] = useState([]);
 
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -27,25 +29,29 @@ export default function AdminProducts() {
   const [editId, setEditId] = useState(null);
 
   // Fetch products
-  const fetchProducts = async () => {
+  const fetchProductsAndCategories = async () => {
     setLoading(true);
     try {
-      const { data } = await productAPI.getAll({ search: searchTerm, limit: 100 });
-      setProducts(data.data.products);
+      const [productRes, categoryRes] = await Promise.all([
+        productAPI.getAll({ search: searchTerm, limit: 100 }),
+        categoryAPI.getAll()
+      ]);
+      setProducts(productRes.data.data.products);
+      setCategories(categoryRes.data.data.categories);
     } catch (err) {
-      toast.error('Failed to load products');
+      toast.error('Failed to load catalog data');
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchProducts();
+    fetchProductsAndCategories();
   }, []);
 
   const handleSearch = (e) => {
     e.preventDefault();
-    fetchProducts();
+    fetchProductsAndCategories();
   };
 
   // Form handling
@@ -56,7 +62,8 @@ export default function AdminProducts() {
 
   const openAddModal = () => {
     setModalMode('add');
-    setForm({ name: '', price: '', description: '', category: 'Cakes', unit: '', stock: '', status: 'active', images: [] });
+    const defaultCat = categories.length > 0 ? categories[0]._id : '';
+    setForm({ name: '', price: '', description: '', category: defaultCat, unit: '', stock: '', status: 'active', images: [] });
     setIsModalOpen(true);
   };
 
@@ -67,7 +74,7 @@ export default function AdminProducts() {
       name: product.name,
       price: product.price,
       description: product.description,
-      category: product.category,
+      category: product.category?._id || product.category || '',
       unit: product.unit,
       stock: product.stock,
       status: product.status,
@@ -114,7 +121,7 @@ export default function AdminProducts() {
         toast.success('Product updated successfully');
       }
       closeModal();
-      fetchProducts();
+      fetchProductsAndCategories();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to save product');
     } finally {
@@ -127,7 +134,7 @@ export default function AdminProducts() {
       try {
         await productAPI.delete(id);
         toast.success('Product deleted');
-        fetchProducts();
+        fetchProductsAndCategories();
       } catch (err) {
         toast.error('Failed to delete product');
       }
@@ -210,7 +217,11 @@ export default function AdminProducts() {
                       {p.name}
                       <div className="text-[10px] uppercase text-[#6b615a] mt-1 truncate max-w-[250px]">{p.description}</div>
                     </td>
-                    <td className="px-6 py-4 text-[#6b615a]">{p.category}</td>
+                    <td className="px-6 py-4 text-[#6b615a]">
+                       <span className="bg-[#c79261]/10 px-2.5 py-1 rounded text-[#c79261] font-semibold text-xs tracking-wider">
+                         {p.category?.name || p.category || 'Uncategorized'}
+                       </span>
+                    </td>
                     <td className="px-6 py-4 text-[#2c2a29] font-bold">₹{p.price}</td>
                     <td className="px-6 py-4 text-[#6b615a]">{p.unit}</td>
                     <td className="px-6 py-4">
@@ -271,14 +282,9 @@ export default function AdminProducts() {
                       className="flex h-10 w-full items-center justify-between rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:border-[#c79261] focus:ring-1 focus:ring-[#c79261]"
                     >
                       <option value="" disabled>Select Category</option>
-                      <option value="Raw Materials">Raw Materials</option>
-                      <option value="Frozen Pastry">Frozen Pastry</option>
-                      <option value="Baked Bases">Baked Bases</option>
-                      <option value="Snacks">Snacks</option>
-                      <option value="Bread">Bread</option>
-                      <option value="Biscuit">Biscuit</option>
-                      <option value="Cakes">Cakes</option>
-                      <option value="Other">Other</option>
+                      {categories.map((c) => (
+                         <option key={c._id} value={c._id}>{c.name}</option>
+                      ))}
                     </select>
                   </div>
                   <div className="space-y-1.5 border-none p-0">

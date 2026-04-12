@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { Star, MapPin, Phone, Mail, Award, Clock, ShoppingCart, Heart, Croissant } from 'lucide-react'
 import './App.css'
+import { useNavigate } from 'react-router-dom'
+import useAuthStore from './store/authStore'
 import UserMenu from './components/UserMenu'
 
 // Existing Images
@@ -116,6 +118,21 @@ const COMMUNITY_FAVORITES = [
 
 function App() {
   const [filter, setFilter] = useState('All');
+  const navigate = useNavigate();
+  const { isAuthenticated, user } = useAuthStore();
+
+  const handleGoToDashboard = () => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+
+    if (user?.role === 'admin') {
+      navigate('/admin/dashboard');
+    } else {
+      navigate('/dashboard/products');
+    }
+  };
 
   const filteredProducts = filter === 'All' 
     ? PRODUCTS 
@@ -129,23 +146,21 @@ function App() {
           <div className="logo-circle"><Croissant size={22} /></div>
           <div className="logo-text">
             <strong>Akoos Bakery</strong>
-            <span>Artisan Bakery</span>
+            {/* <span>Artisan Bakery</span> */}
           </div>
         </div>
         <nav className="nav-links">
           <a href="#">Home</a>
-          <a href="#cakes">Cakes</a>
           <a href="#pastries">Pastries</a>
           <a href="#about">About</a>
           <a href="#contact">Contact</a>
         </nav>
         <div className="header-actions">
           <div className="contact-info">
-            <div className="contact-item"><Phone size={14} /> (555) 123-4567</div>
-            <div className="contact-item"><MapPin size={14} /> 123 Baker Street</div>
-            <div className="contact-item"><ShoppingCart size={14} /> Cart (0)</div>
+            <div className="contact-item"><Phone size={14} /> (+91) 123-4567</div>
+            <div className="contact-item"><MapPin size={14} /> Aayyappanthode</div>
           </div>
-          <a href="#order" className="btn-primary">Order Now</a>
+          <button onClick={handleGoToDashboard} className="btn-primary">Go to Dashboard</button>
           <div style={{ marginLeft: '12px' }}>
             <UserMenu />
           </div>
@@ -176,7 +191,7 @@ function App() {
             </div>
 
             <div className="hero-actions">
-              <button className="btn-primary">Explore Our Menu</button>
+              <button onClick={handleGoToDashboard} className="btn-primary">Explore Our Menu</button>
               <button className="btn-secondary">Watch Our Story</button>
             </div>
             
@@ -245,7 +260,7 @@ function App() {
                 <div className="price">₹1,500</div>
                 <div style={{display:'flex', gap:'12px'}}>
                   <button className="btn-secondary" style={{padding:'10px'}}><Heart size={18}/></button>
-                  <button className="btn-primary">Order Now</button>
+                  <button onClick={handleGoToDashboard} className="btn-primary">Order Now</button>
                 </div>
               </div>
             </div>
@@ -256,7 +271,7 @@ function App() {
         <section id="pastries">
           <div className="section-header">
             <div className="eyebrow" style={{ background: 'transparent', boxShadow: 'none', border: '1px solid var(--border-light)' }}><Star size={14} /> Handcrafted Excellence</div>
-            <h2>Our Artisan Collection</h2>
+            <h2>Our Collections</h2>
             <p>Discover our carefully curated selection of handcrafted cakes, pastries, and snacks. Each creation is made with premium ingredients and traditional techniques.</p>
           </div>
 

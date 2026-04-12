@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Package, Users, LogOut, Menu, X, ShieldCheck } from 'lucide-react';
+import { LayoutDashboard, Package, Users, LogOut, Menu, X, ShieldCheck, FolderTree, PackageOpen, TrendingUp } from 'lucide-react';
 import useAuthStore from '@/store/authStore';
 
 export default function AdminLayout() {
@@ -10,12 +10,15 @@ export default function AdminLayout() {
 
   const navItems = [
     { name: 'Overview', path: '/admin/dashboard', icon: LayoutDashboard },
-    { name: 'Products Management', path: '/admin/products', icon: Package },
-    { name: 'User Management', path: '/admin/users', icon: Users },
+    { name: 'Orders Mgt.', path: '/admin/orders', icon: PackageOpen },
+    { name: 'Categories Mgt.', path: '/admin/categories', icon: FolderTree },
+    { name: 'Products Mgt.', path: '/admin/products', icon: Package },
+    { name: 'User Mgt.', path: '/admin/users', icon: Users },
+    { name: 'Sales Report', path: '/admin/sales', icon: TrendingUp },
   ];
 
   return (
-    <div className="min-h-screen bg-[#fdfbf9] flex flex-col md:flex-row font-sans">
+    <div className="h-screen bg-[#fdfbf9] flex flex-col md:flex-row font-sans overflow-hidden">
       {/* Mobile Header */}
       <div className="md:hidden flex items-center justify-between p-4 bg-white border-b border-[#f0e9e1] sticky top-0 z-30">
         <div className="flex items-center gap-2">

@@ -3,32 +3,37 @@ import { ShoppingCart, Trash2, ArrowRight, Minus, Plus, FileText } from 'lucide-
 import { Button } from '@/components/ui/button';
 import useCartStore from '@/store/cartStore';
 import { toast } from 'sonner';
+import { orderAPI } from '@/api/orderApi';
+import { useState } from 'react';
 
 export default function Cart() {
   const navigate = useNavigate();
   const { items, updateQuantity, removeFromCart, getCartTotal, clearCart } = useCartStore();
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleCheckout = () => {
-    // In a real app, this would submit to the backend /orders endpoint
-    // We'll simulate order placement and redirect to history
-    toast.success('B2B Order placed successfully! 📦');
-    
-    // Simulate order ID generation and save to pseudo history
-    const orderId = 'ORD-' + Math.floor(Math.random() * 1000000);
-    const newOrder = {
-      id: orderId,
-      date: new Date().toISOString(),
-      items: [...items],
-      total: getCartTotal(),
-      status: 'Processing',
-    };
-    
-    // Saving to localstorage just to mock the Orders page visually later
-    const existingOrders = JSON.parse(localStorage.getItem('akoos-mock-orders') || '[]');
-    localStorage.setItem('akoos-mock-orders', JSON.stringify([newOrder, ...existingOrders]));
+  const handleCheckout = async () => {
+    setSubmitting(true);
+    try {
+      const orderPayload = {
+        items: items.map(item => ({
+          product: item.product._id || item.product.id,
+          quantity: item.quantity,
+          price: item.product.price
+        })),
+        taxAmount: Math.floor(getCartTotal() * 0.18),
+        shippingAmount: 0,
+        totalAmount: Math.floor(getCartTotal() * 1.18)
+      };
 
-    clearCart();
-    navigate('/dashboard/orders');
+      await orderAPI.create(orderPayload);
+      toast.success('B2B Order placed successfully! 📦');
+      clearCart();
+      navigate('/dashboard/orders');
+    } catch (error) {
+      toast.error('Failed to create order. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (items.length === 0) {
@@ -148,9 +153,10 @@ export default function Cart() {
 
             <Button
               onClick={handleCheckout}
+              disabled={submitting}
               className="w-full h-12 bg-[#2c2a29] hover:bg-[#1a1918] text-white rounded-xl shadow-lg shadow-black/10 transition-all font-semibold gap-2 cursor-pointer"
             >
-              Confirm & Place Order
+              {submitting ? 'Processing...' : 'Confirm & Place Order'}
               <ArrowRight className="w-4 h-4" />
             </Button>
             

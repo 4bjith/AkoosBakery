@@ -1,15 +1,27 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Package, Eye, ChevronRight, Download } from 'lucide-react';
+import { Package, Eye, ChevronRight, Download, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { orderAPI } from '@/api/orderApi';
+import { toast } from 'sonner';
 
 export default function Orders() {
   const [orders, setOrders] = useState([]);
 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    // Get mock orders
-    const saved = JSON.parse(localStorage.getItem('akoos-mock-orders') || '[]');
-    setOrders(saved);
+    const fetchOrders = async () => {
+      try {
+        const { data } = await orderAPI.getMyOrders();
+        setOrders(data.data.orders);
+      } catch (err) {
+        toast.error('Failed to retrieve orders');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchOrders();
   }, []);
 
   const getStatusColor = (status) => {
@@ -28,7 +40,12 @@ export default function Orders() {
         <p className="text-sm text-[#6b615a]">View and track all your wholesale purchase orders.</p>
       </div>
 
-      {orders.length === 0 ? (
+      {loading ? (
+        <div className="bg-white rounded-2xl p-12 text-center border border-[#f0e9e1] shadow-sm">
+          <RefreshCw className="w-8 h-8 text-[#c79261] mx-auto mb-4 animate-spin" />
+          <h3 className="text-lg font-medium text-[#2c2a29]">Loading orders...</h3>
+        </div>
+      ) : orders.length === 0 ? (
         <div className="bg-white rounded-2xl p-12 text-center border border-[#f0e9e1] shadow-sm">
           <Package className="w-12 h-12 text-[#f0e9e1] mx-auto mb-4" />
           <h3 className="text-lg font-medium text-[#2c2a29] mb-2">No previous orders</h3>
@@ -57,12 +74,12 @@ export default function Orders() {
               </thead>
               <tbody className="divide-y divide-[#f0e9e1]">
                 {orders.map((order) => (
-                  <tr key={order.id} className="hover:bg-[#fcfaf8] transition-colors">
-                    <td className="px-6 py-4 font-medium text-[#2c2a29]">
-                      {order.id}
+                  <tr key={order._id} className="hover:bg-[#fcfaf8] transition-colors">
+                    <td className="px-6 py-4 font-medium text-[#2c2a29] uppercase">
+                      ...{order._id.slice(-6)}
                     </td>
                     <td className="px-6 py-4 text-[#6b615a]">
-                      {new Date(order.date).toLocaleDateString('en-IN', {
+                      {new Date(order.createdAt).toLocaleDateString('en-IN', {
                         day: 'numeric', month: 'short', year: 'numeric'
                       })}
                     </td>
@@ -70,7 +87,7 @@ export default function Orders() {
                       {order.items.reduce((acc, i) => acc + i.quantity, 0)} units
                     </td>
                     <td className="px-6 py-4 font-semibold text-[#2c2a29]">
-                      ₹{Math.floor(order.total * 1.18).toLocaleString()}
+                      ₹{order.totalAmount?.toLocaleString()}
                     </td>
                     <td className="px-6 py-4">
                       <span className={`px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full ${getStatusColor(order.status)}`}>
@@ -78,7 +95,7 @@ export default function Orders() {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right space-x-2">
-                      <Link to={`/dashboard/orders/${order.id}/invoice`}>
+                      <Link to={`/dashboard/orders/${order._id}/invoice`}>
                         <Button variant="outline" size="sm" className="border-[#f0e9e1] text-[#2c2a29] hover:bg-[#f5ebe2] hover:text-[#c79261] h-8 cursor-pointer">
                           <Download className="w-3.5 h-3.5 mr-1.5" />
                           Invoice
