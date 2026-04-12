@@ -2,6 +2,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
 }
 
 /* Header */
@@ -77,6 +78,19 @@
   gap: 24px;
 }
 
+.menu-toggle {
+  display: none;
+  background: transparent;
+  border: none;
+  color: var(--text-main);
+  cursor: pointer;
+  padding: 4px;
+}
+
+.mobile-only-actions {
+  display: none;
+}
+
 .contact-info {
   display: flex;
   align-items: center;
@@ -107,6 +121,10 @@
   background: var(--primary-hover);
   transform: translateY(-2px);
   box-shadow: var(--shadow-sm);
+}
+
+.desktop-only {
+  display: block;
 }
 
 /* Sections */
@@ -227,11 +245,17 @@ section {
   gap: 20px;
 }
 
-.bento-card {
+.bento-card, .review-card {
   background: white;
   border-radius: var(--radius-lg);
   padding: 20px;
   box-shadow: var(--shadow-md);
+  height: fit-content;
+  transition: all 0.3s ease;
+}
+
+.staggered {
+  transform: translateY(20px);
 }
 
 .bento-card img {
@@ -775,8 +799,32 @@ section {
 }
 
 @media (max-width: 1024px) {
+  section {
+    padding: 60px 5vw;
+  }
+
   .hero {
     grid-template-columns: 1fr;
+    gap: 40px;
+    text-align: center;
+  }
+
+  .hero-content {
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  .hero-content h1 {
+    font-size: 44px;
+  }
+
+  .hero-actions {
+    justify-content: center;
+  }
+
+  .stats-row {
+    max-width: 400px;
+    margin: 0 auto 40px;
   }
 
   .masterpiece-card {
@@ -784,7 +832,7 @@ section {
   }
 
   .masterpiece-img {
-    height: 300px;
+    height: 350px;
   }
 
   .product-grid {
@@ -793,35 +841,87 @@ section {
 
   .about {
     grid-template-columns: 1fr;
-  }
-
-  .about-visual {
-    height: 400px;
-    margin-top: 40px;
-  }
-
-  .footer-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-@media (max-width: 768px) {
-
-  .nav-links,
-  .contact-info {
-    display: none;
-  }
-
-  .stats-row {
-    grid-template-columns: 1fr;
+    gap: 40px;
   }
 
   .hero-visual {
     grid-template-columns: 1fr;
+    gap: 20px;
   }
 
-  .review-card {
-    grid-column: span 1;
+  .bento-card, .review-card, .staggered {
+    transform: none !important;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .about-visual {
+    height: 450px;
+    margin-top: 20px;
+  }
+
+  .community-stat {
+    min-width: auto;
+    padding: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .site-header {
+    padding: 16px 5vw;
+  }
+
+  .menu-toggle {
+    display: block;
+    z-index: 101;
+  }
+
+  .desktop-only {
+    display: none;
+  }
+
+  .nav-links {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 80%;
+    max-width: 300px;
+    height: 100vh;
+    background: white;
+    flex-direction: column;
+    padding: 100px 40px;
+    gap: 24px;
+    box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+    transition: right 0.3s ease-in-out;
+    z-index: 100;
+  }
+
+  .nav-links.active {
+    right: 0;
+  }
+
+  .nav-links a {
+    font-size: 18px;
+    border-bottom: 1px solid var(--border-light);
+    padding-bottom: 8px;
+  }
+
+  .mobile-only-actions {
+    display: block;
+    margin-top: 20px;
+  }
+
+  .contact-info {
+    display: none;
+  }
+
+  .hero-content h1 {
+    font-size: 36px;
+  }
+
+  .hero-visual {
+    grid-template-columns: 1fr;
   }
 
   .product-grid {
@@ -830,19 +930,58 @@ section {
 
   .community-stats {
     flex-direction: column;
+    gap: 16px;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .newsletter-section h2 {
+    font-size: 24px;
+  }
+
+  .subscribe-form {
+    flex-direction: column;
+  }
+
+  .subscribe-form button {
+    width: 100%;
   }
 
   .about-features {
     grid-template-columns: 1fr;
   }
 
-  .footer-grid {
-    grid-template-columns: 1fr;
+  .section-header h2 {
+    font-size: 28px;
   }
 
-  .footer-bottom {
+  .masterpiece-content {
+    padding: 30px;
+  }
+
+  .features-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-content h1 {
+    font-size: 32px;
+  }
+
+  .hero-actions {
     flex-direction: column;
-    gap: 16px;
-    text-align: center;
+  }
+  
+  .btn-primary, .btn-secondary {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .about-visual {
+    height: 350px;
   }
 }

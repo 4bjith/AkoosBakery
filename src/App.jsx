@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Star, MapPin, Phone, Mail, Award, Clock, ShoppingCart, Heart, Croissant } from 'lucide-react'
+import { Star, MapPin, Phone, Mail, Award, Clock, ShoppingCart, Heart, Croissant, Menu, X } from 'lucide-react'
 import './App.css'
 import { useNavigate } from 'react-router-dom'
 import useAuthStore from './store/authStore'
@@ -134,36 +134,47 @@ function App() {
     }
   };
 
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   const filteredProducts = filter === 'All' 
     ? PRODUCTS 
     : PRODUCTS.filter(p => p.category === filter);
 
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+
   return (
     <div className="page">
       {/* HEADER */}
-      <header className="site-header">
+      <header className={`site-header ${isMenuOpen ? 'menu-open' : ''}`}>
         <div className="logo-area">
           <div className="logo-circle"><Croissant size={22} /></div>
           <div className="logo-text">
             <strong>Akoos Bakery</strong>
-            {/* <span>Artisan Bakery</span> */}
           </div>
         </div>
-        <nav className="nav-links">
-          <a href="#">Home</a>
-          <a href="#pastries">Pastries</a>
-          <a href="#about">About</a>
-          <a href="#contact">Contact</a>
+        
+        <nav className={`nav-links ${isMenuOpen ? 'active' : ''}`}>
+          <a href="#" onClick={() => setIsMenuOpen(false)}>Home</a>
+          <a href="#pastries" onClick={() => setIsMenuOpen(false)}>Pastries</a>
+          <a href="#about" onClick={() => setIsMenuOpen(false)}>About</a>
+          <a href="#contact" onClick={() => setIsMenuOpen(false)}>Contact</a>
+          <div className="mobile-only-actions">
+            <button onClick={handleGoToDashboard} className="btn-primary w-full">Go to Dashboard</button>
+          </div>
         </nav>
+
         <div className="header-actions">
           <div className="contact-info">
             <div className="contact-item"><Phone size={14} /> (+91) 123-4567</div>
             <div className="contact-item"><MapPin size={14} /> Aayyappanthode</div>
           </div>
-          <button onClick={handleGoToDashboard} className="btn-primary">Go to Dashboard</button>
+          <button onClick={handleGoToDashboard} className="btn-primary desktop-only">Go to Dashboard</button>
           <div style={{ marginLeft: '12px' }}>
             <UserMenu />
           </div>
+          <button className="menu-toggle" onClick={toggleMenu}>
+            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
       </header>
 
@@ -208,7 +219,7 @@ function App() {
                <p>Rich tiered cake layers</p>
                <div className="price">From ₹1,200</div>
              </div>
-             <div className="bento-card" style={{ transform: 'translateY(20px)' }}>
+             <div className="bento-card staggered">
                <img src="https://images.unsplash.com/photo-1557308536-ee471ef2c390?auto=format&fit=crop&q=80&w=400" alt="Wedding Collection" />
                <h4>Dessert Collection</h4>
                <p>Bespoke designs for your day</p>
@@ -220,7 +231,7 @@ function App() {
                <p>Authentic Kerala treats</p>
                <div className="price">₹250</div>
              </div>
-             <div className="review-card" style={{ transform: 'translateY(20px)' }}>
+             <div className="review-card staggered">
                <div className="card-meta">
                  <div className="stars"><Star size={12} fill="currentColor"/><Star size={12} fill="currentColor"/><Star size={12} fill="currentColor"/><Star size={12} fill="currentColor"/><Star size={12} fill="currentColor"/></div>
                  <span>4.9/5</span>
