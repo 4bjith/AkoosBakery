@@ -15,7 +15,7 @@ const API_BASE_URL = rawBaseURL.endsWith('/api') ? rawBaseURL : `${rawBaseURL}/a
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  withCredentials: true,
+  withCredentials: false, // Disable cookies - use only Authorization header
   headers: {
     'Content-Type': 'application/json',
   },

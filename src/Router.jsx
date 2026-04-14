@@ -24,6 +24,15 @@ import AdminCategories from './admin/AdminCategories';
 import AdminProducts from './admin/AdminProducts';
 import AdminUsers from './admin/AdminUsers';
 import AdminSales from './admin/AdminSales';
+import AdminStaff from './admin/AdminStaff';
+
+// Staff Dashboard
+import StaffLayout from './staff/StaffLayout';
+import StaffDashboard from './staff/StaffDashboard';
+import CustomerList from './staff/customers/CustomerList';
+import OrderList from './staff/orders/OrderList';
+import PlaceOrder from './staff/orders/PlaceOrder';
+import InvoiceManagement from './staff/invoices/InvoiceManagement';
 
 export default function Router() {
   return (
@@ -61,7 +70,25 @@ export default function Router() {
           <Route path="products" element={<AdminProducts />} />
           {/* placeholder for users management */}
           <Route path="users" element={<AdminUsers />} />
+          <Route path="staff" element={<AdminStaff />} />
           <Route path="sales" element={<AdminSales />} />
+        </Route>
+
+        {/* Protected Staff Dashboard Portal */}
+        <Route
+          path="/staff"
+          element={
+            <ProtectedRoute allowedRoles={['staff']}>
+              <StaffLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<Navigate to="dashboard" replace />} />
+          <Route path="dashboard" element={<StaffDashboard />} />
+          <Route path="customers" element={<CustomerList />} />
+          <Route path="orders" element={<OrderList />} />
+          <Route path="orders/place" element={<PlaceOrder />} />
+          <Route path="invoices" element={<InvoiceManagement />} />
         </Route>
 
         {/* Protected B2B Dashboard Portal */}

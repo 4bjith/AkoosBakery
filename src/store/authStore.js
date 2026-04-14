@@ -36,7 +36,9 @@ const useAuthStore = create(
         set({ isLoading: true, error: null });
         try {
           const { data } = await userAPI.login(formData);
-          localStorage.setItem('token', data.token);
+          // Token is stored in HTTP-only cookie by backend
+          // We only store user data in localStorage for UI state
+          localStorage.setItem('token', data.token); // Keep for API calls
           set({
             user: data.data.user,
             token: data.token,

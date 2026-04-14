@@ -3,6 +3,7 @@ import { Send, User as UserIcon, Building2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import useAuthStore from '@/store/authStore';
+import { toast } from 'sonner';
 
 export default function Support() {
   const { user } = useAuthStore();
@@ -39,6 +40,7 @@ export default function Support() {
     
     setMessages((prev) => [...prev, userMsg]);
     setNewMessage('');
+    toast.success('Message sent to support team 📨');
 
     // Simulate admin reply
     setTimeout(() => {
@@ -49,6 +51,7 @@ export default function Support() {
         time: new Date().toISOString(),
       };
       setMessages((prev) => [...prev, adminReply]);
+      toast.info('Support team has acknowledged your message');
     }, 1000);
   };
 

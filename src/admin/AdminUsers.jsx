@@ -67,7 +67,19 @@ export default function AdminUsers() {
       email: user.email || '',
       phone: user.phone || '',
       role: user.role || 'customer',
-      isActive: user.isActive
+      isActive: user.isActive,
+      permissions: {
+        canManageCustomers: user.permissions?.canManageCustomers ?? true,
+        canCreateCustomers: user.permissions?.canCreateCustomers ?? true,
+        canEditCustomers: user.permissions?.canEditCustomers ?? true,
+        canManageAddresses: user.permissions?.canManageAddresses ?? true,
+        canViewPricing: user.permissions?.canViewPricing ?? true,
+        canEditInvoices: user.permissions?.canEditInvoices ?? true,
+        canUpdateOrderStatus: user.permissions?.canUpdateOrderStatus ?? true,
+        canViewAllCustomers: user.permissions?.canViewAllCustomers ?? true,
+        canPlaceOrders: user.permissions?.canPlaceOrders ?? true,
+        canApplyDiscounts: user.permissions?.canApplyDiscounts ?? true,
+      }
     });
     setIsEditModalOpen(true);
   };
@@ -122,6 +134,7 @@ export default function AdminUsers() {
   // Metrics
   const activeCount = users.filter(u => u.isActive).length;
   const adminCount = users.filter(u => u.role === 'admin').length;
+  const staffCount = users.filter(u => u.role === 'staff').length;
   const customerCount = users.filter(u => u.role === 'customer').length;
 
   return (
@@ -156,13 +169,14 @@ export default function AdminUsers() {
             >
                 <option value="All">All Roles</option>
                 <option value="Admin">Admins</option>
+                <option value="Staff">Staff</option>
                 <option value="Customer">Customers</option>
             </select>
         </div>
       </div>
 
       {/* Metrics Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
         <div className="bg-white p-6 rounded-2xl border border-[#f0e9e1] flex items-start gap-4">
           <div className="p-3 bg-emerald-50 rounded-xl">
             <UserCheck className="w-6 h-6 text-emerald-600" />
@@ -188,6 +202,15 @@ export default function AdminUsers() {
           <div>
             <p className="text-sm text-[#6b615a] font-medium">System Admins</p>
             <p className="text-2xl font-bold text-[#2c2a29]">{adminCount}</p>
+          </div>
+        </div>
+        <div className="bg-white p-6 rounded-2xl border border-[#f0e9e1] flex items-start gap-4">
+          <div className="p-3 bg-purple-50 rounded-xl">
+            <Users className="w-6 h-6 text-purple-600" />
+          </div>
+          <div>
+            <p className="text-sm text-[#6b615a] font-medium">Staff Members</p>
+            <p className="text-2xl font-bold text-[#2c2a29]">{staffCount}</p>
           </div>
         </div>
         <div className="bg-white p-6 rounded-2xl border border-[#f0e9e1] flex items-start gap-4">
@@ -252,7 +275,9 @@ export default function AdminUsers() {
                     </td>
                     <td className="px-6 py-4 border-none">
                       <span className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
-                        u.role === 'admin' ? 'bg-indigo-100 text-indigo-700' : 'bg-amber-100 text-amber-700'
+                        u.role === 'admin' ? 'bg-indigo-100 text-indigo-700' : 
+                        u.role === 'staff' ? 'bg-purple-100 text-purple-700' : 
+                        'bg-amber-100 text-amber-700'
                       }`}>
                         {u.role}
                       </span>
@@ -271,7 +296,7 @@ export default function AdminUsers() {
                         </button>
                     </td>
                     <td className="px-6 py-4 border-none text-right">
-                       <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                       <div className="flex justify-end gap-2">
                           <Button onClick={() => openEditModal(u)} variant="outline" size="sm" className="h-8 w-8 p-0 border-[#f0e9e1] cursor-pointer">
                              <Edit2 className="w-3.5 h-3.5 text-[#2c2a29]" />
                           </Button>
@@ -336,9 +361,13 @@ export default function AdminUsers() {
                     <select 
                         className="w-full bg-[#fdfbf9] border border-[#f0e9e1] rounded-xl px-3 py-2.5 outline-none cursor-pointer"
                         value={editForm.role}
-                        onChange={(e) => setEditForm({...editForm, role: e.target.value})}
+                        onChange={(e) => {
+                          const newRole = e.target.value;
+                          setEditForm({...editForm, role: newRole});
+                        }}
                     >
                         <option value="customer">Customer</option>
+                        <option value="staff">Staff</option>
                         <option value="admin">Administrator</option>
                     </select>
                 </div>
@@ -359,6 +388,64 @@ export default function AdminUsers() {
                     </div>
                 </div>
               </div>
+
+              {/* Staff Permissions Section */}
+              {editForm.role === 'staff' && (
+                <div className="space-y-3 pt-2 border-t border-[#f0e9e1]">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold text-[#6b615a] uppercase">Staff Permissions</label>
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setEditForm({
+                          ...editForm,
+                          permissions: Object.keys(editForm.permissions).reduce((acc, key) => ({...acc, [key]: true}), {})
+                        })}
+                        className="text-[10px] px-2 py-1 bg-[#c79261]/10 text-[#c79261] rounded hover:bg-[#c79261]/20 transition-colors"
+                      >
+                        Enable All
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setEditForm({
+                          ...editForm,
+                          permissions: Object.keys(editForm.permissions).reduce((acc, key) => ({...acc, [key]: false}), {})
+                        })}
+                        className="text-[10px] px-2 py-1 bg-red-50 text-red-500 rounded hover:bg-red-100 transition-colors"
+                      >
+                        Disable All
+                      </button>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1">
+                    {[
+                      { key: 'canManageCustomers', label: 'Manage Customers' },
+                      { key: 'canCreateCustomers', label: 'Create Customers' },
+                      { key: 'canEditCustomers', label: 'Edit Customers' },
+                      { key: 'canManageAddresses', label: 'Manage Addresses' },
+                      { key: 'canViewPricing', label: 'View Pricing' },
+                      { key: 'canEditInvoices', label: 'Edit Invoices' },
+                      { key: 'canUpdateOrderStatus', label: 'Update Order Status' },
+                      { key: 'canViewAllCustomers', label: 'View All Customers' },
+                      { key: 'canPlaceOrders', label: 'Place Orders' },
+                      { key: 'canApplyDiscounts', label: 'Apply Discounts' },
+                    ].map(({ key, label }) => (
+                      <label key={key} className="flex items-center gap-2 p-2 bg-[#fdfbf9] rounded-lg cursor-pointer hover:bg-[#f5f0eb] transition-colors">
+                        <input
+                          type="checkbox"
+                          checked={editForm.permissions[key]}
+                          onChange={(e) => setEditForm({
+                            ...editForm,
+                            permissions: { ...editForm.permissions, [key]: e.target.checked }
+                          })}
+                          className="w-4 h-4 accent-[#c79261] cursor-pointer"
+                        />
+                        <span className="text-xs text-[#2c2a29]">{label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <div className="pt-4 flex gap-3">
                 <Button 

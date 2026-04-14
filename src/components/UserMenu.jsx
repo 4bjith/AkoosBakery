@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import useAuthStore from '@/store/authStore';
+import { toast } from 'sonner';
 
 export default function UserMenu() {
   const { user, isAuthenticated, logout } = useAuthStore();
@@ -26,6 +27,7 @@ export default function UserMenu() {
 
   const handleLogout = async () => {
     await logout();
+    toast.success('Logged out successfully 👋');
     window.location.href = '/';
   };
 
@@ -55,15 +57,15 @@ export default function UserMenu() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button className="flex items-center gap-2 cursor-pointer group outline-none">
+      <DropdownMenuTrigger>
+        <div className="flex items-center gap-2 cursor-pointer group outline-none">
           <Avatar className="w-8 h-8 border-2 border-[#c79261]/20 group-hover:border-[#c79261]/50 transition-colors">
             <AvatarFallback className="bg-gradient-to-br from-[#c79261] to-[#b58150] text-white text-xs font-bold">
               {getInitials(user?.name)}
             </AvatarFallback>
           </Avatar>
           <span className="text-sm font-medium text-[#2c2a29] hidden md:block">{user?.name?.split(' ')[0]}</span>
-        </button>
+        </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">
         <div className="px-2 py-2">

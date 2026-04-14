@@ -4,6 +4,7 @@ import { orderAPI } from '@/api/orderApi';
 import { ArrowLeft, Printer, Download, Clock, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import useAuthStore from '@/store/authStore';
+import { toast } from 'sonner';
 
 export default function Invoice() {
   const { id } = useParams();
@@ -26,6 +27,7 @@ export default function Invoice() {
   }, [id]);
 
   const handlePrint = () => {
+    toast.success('Preparing invoice for printing... 🖨️');
     window.print();
   };
 
@@ -63,7 +65,7 @@ export default function Invoice() {
             <Printer className="w-4 h-4 mr-2" />
             Print
           </Button>
-          <Button onClick={handlePrint} className="bg-[#c79261] hover:bg-[#b58150] text-white shadow-md cursor-pointer">
+          <Button onClick={() => { toast.success('Downloading invoice as PDF... 📥'); handlePrint(); }} className="bg-[#c79261] hover:bg-[#b58150] text-white shadow-md cursor-pointer">
             <Download className="w-4 h-4 mr-2" />
             Download PDF
           </Button>
